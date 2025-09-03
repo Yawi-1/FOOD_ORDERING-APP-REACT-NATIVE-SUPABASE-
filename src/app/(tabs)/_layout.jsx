@@ -1,25 +1,25 @@
-// app/(tabs)/_layout.js
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{headerTitleAlign:'center'}}>
+    <Tabs screenOptions={{ headerShown: false }}>
+      <Tabs.Screen name='index' options={{ href: null }} />
       <Tabs.Screen
-        name="home"
+        name="menu"
         options={{
-          title: "Home",
+          title: "Menu",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" color={color} size={size} />
+            <Ionicons name="restaurant" color={color} size={size} />
           ),
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="orders"
         options={{
-          title: "Settings",
+          title: "Orders",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" color={color} size={size} />
+            <Ionicons name="cart" color={color} size={size} />
           ),
         }}
       />
