@@ -1,10 +1,13 @@
 // app/_layout.js
 import { Stack } from "expo-router";
+import CartProvider from "@/context/CartProvider";
 
 export default function RootLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <CartProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </CartProvider>
   );
 }

@@ -1,18 +1,24 @@
 import products from '@assets/data/products';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions } from 'react-native';
+import { useCart } from '@/context/CartProvider';
 
 const { width } = Dimensions.get('window');
 
 const ProductDetail = () => {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
   const sizes = ['S', 'M', 'L', 'XL'];
-  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedSize, setSelectedSize] = useState('M');
   const product = products.find((p) => p.id.toString() === id);
+  const { addItem } = useCart();
+  const addToCart = () => {
+    addItem(product, selectedSize)
+    router.push('/cart')
+  }
 
   if (!product) return <Text>GO BACK</Text>;
-
   return (
     <ScrollView style={styles.container}>
       <Stack.Screen options={{ title: product.name }} />
@@ -50,7 +56,7 @@ const ProductDetail = () => {
         Price: ₹{product.price}
       </Text>
 
-      <TouchableOpacity style={styles.addToCartBtn}>
+      <TouchableOpacity onPress={addToCart} style={styles.addToCartBtn}>
         <Text style={styles.addToCartText}>Add to cart</Text>
       </TouchableOpacity>
     </ScrollView>

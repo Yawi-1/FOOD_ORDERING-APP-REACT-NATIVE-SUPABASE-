@@ -2,7 +2,6 @@ import { StyleSheet, Image, Text, View, Pressable } from 'react-native';
 import { Link } from 'expo-router';
 
 export default function ProductListItem({ product }) {
-  console.log(product.image)
   return (
     <Link href={`/menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
