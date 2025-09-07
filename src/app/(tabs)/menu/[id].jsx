@@ -3,7 +3,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions } from 'react-native';
 import { useCart } from '@/context/CartProvider';
-
+import Button from '@/components/Button';
 const { width } = Dimensions.get('window');
 
 const ProductDetail = () => {
@@ -13,6 +13,7 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState('M');
   const product = products.find((p) => p.id.toString() === id);
   const { addItem } = useCart();
+  
   const addToCart = () => {
     addItem(product, selectedSize)
     router.push('/cart')
@@ -55,10 +56,8 @@ const ProductDetail = () => {
       <Text style={[styles.label, { fontSize: 18 }]}>
         Price: ₹{product.price}
       </Text>
-
-      <TouchableOpacity onPress={addToCart} style={styles.addToCartBtn}>
-        <Text style={styles.addToCartText}>Add to cart</Text>
-      </TouchableOpacity>
+     <Button title='Add to cart' onPress={addToCart}/>
+      
     </ScrollView>
   );
 };
@@ -86,7 +85,7 @@ const styles = StyleSheet.create({
   },
   sizeContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // ✅ responsive wrapping
+    flexWrap: 'wrap', 
     gap: 12,
     marginBottom: 20,
   },
@@ -104,17 +103,5 @@ const styles = StyleSheet.create({
     color: 'blue',
     fontSize: 16,
     fontWeight: '600',
-  },
-  addToCartBtn: {
-    backgroundColor: '#007aff',
-    marginVertical: 20,
-    paddingVertical: 14,
-    borderRadius: 30,
-    alignItems: 'center',
-  },
-  addToCartText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
+  }
 });

@@ -1,9 +1,10 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
+import { useCart } from '@/context/CartProvider';
 
 const CartList = ({ cartItem }) => {
+    const { updateQuantity } = useCart();
     if (!cartItem) return null;
-
     return (
         <View style={styles.container}>
             <Image source={{ uri: cartItem.image }} style={styles.image} />
@@ -16,11 +17,11 @@ const CartList = ({ cartItem }) => {
             </View>
             {/* Update Button */}
             <View style={styles.updateBtnContainer}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => updateQuantity(cartItem.id, -1)}>
                     <Text style={styles.updateBtn}>–</Text>
                 </TouchableOpacity>
                 <Text>{cartItem.quantity}</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => updateQuantity(cartItem.id, 1)}>
                     <Text style={styles.updateBtn}>+</Text>
                 </TouchableOpacity>
             </View>
@@ -40,11 +41,11 @@ const styles = StyleSheet.create({
     size: { fontSize: 12, color: '#666' },
     updateBtnContainer: {
         flexDirection: 'row',
-        alignItems:'center',
+        alignItems: 'center',
         gap: 20,
-        padding:10
+        padding: 10
     },
-    updateBtn:{
-        fontSize:20
+    updateBtn: {
+        fontSize: 20
     }
 });
