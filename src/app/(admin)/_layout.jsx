@@ -3,7 +3,14 @@ import { Ionicons } from "@expo/vector-icons";
 
 export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs screenOptions={{
+      headerShown: false, tabBarStyle: {
+        backgroundColor: "blue",
+      },
+      tabBarActiveTintColor: "white",   // active icon & label color
+      tabBarInactiveTintColor: "gray"
+
+    }} >
       <Tabs.Screen name='index' options={{ href: null }} />
       <Tabs.Screen
         name="menu"

@@ -6,23 +6,27 @@ export default function MenuStack() {
     <Stack
       screenOptions={{
         headerTitleAlign: "center",
-        headerRight: () => (
-          <Link href='/cart' asChild>
-            <Pressable>
-              <Ionicons name="cart" size={24} color={'#007aff'} />
-            </Pressable>
-          </Link>
-        )
       }}
     >
       <Stack.Screen
         name="index"
         options={{
           title: "Menu",
+          headerRight: () => (
+          <Link href='/(admin)/menu/create' asChild>
+            <Pressable>
+              <Ionicons name="add-circle-outline" size={24} color={'#007aff'} />
+            </Pressable>
+          </Link>
+        )
         }}
       />
       <Stack.Screen
         name="[id]"
+      />
+      <Stack.Screen
+        name="create"
+        options={{title:'Create Product'}}
       />
 
     </Stack>

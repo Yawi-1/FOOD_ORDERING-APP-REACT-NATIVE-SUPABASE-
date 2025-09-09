@@ -5,8 +5,9 @@ export default function RootLayout() {
   return (
     <CartProvider>
       <Stack>
-        <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(user)" options={{ headerShown: false }} />
+        <Stack.Screen name="(admin)" options={{ headerShown: false }} />
         <Stack.Screen name="cart" options={{ headerTitleAlign: 'center' }} />
       </Stack>
     </CartProvider>
