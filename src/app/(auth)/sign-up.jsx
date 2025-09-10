@@ -1,12 +1,23 @@
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Button from '@/components/Button';
-import { Link, Stack } from 'expo-router';
+import { Link, Redirect, Stack } from 'expo-router';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false)
+  const { session } = useAuth()
+    if(session) return <Redirect href={'/'}/>
 
+  async function signUpWithEmail() {
+    setLoading(true)
+    const { error } = await supabase.auth.signUp({ email, password })
+    if (error) Alert.alert(error.message)
+    setLoading(false)
+  }
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Sign up' }} />
@@ -15,20 +26,23 @@ const SignUpScreen = () => {
       <TextInput
         value={email}
         onChangeText={setEmail}
-        placeholder="jon@gmail.com"
+        placeholder="abc@gmail.com"
         style={styles.input}
+        placeholderTextColor={'gray'}
+       
       />
 
       <Text style={styles.label}>Password</Text>
       <TextInput
         value={password}
         onChangeText={setPassword}
-        placeholder="Password"
+        placeholder="Min. 6 characters"
         style={styles.input}
         secureTextEntry
+        placeholderTextColor={"gray"}
       />
 
-      <Button title="Create account" />
+      <Button title={loading ? "Creating Account..." : "Create account"} onPress={signUpWithEmail} />
       <Link href="/sign-in" style={styles.textButton}>
         Sign in
       </Link>

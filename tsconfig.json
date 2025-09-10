@@ -4,10 +4,21 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*":["src/*"],
-      "@components/*": ["src/components/*"],
-      "@assets/*": ["assets/*"],
-      "@context/*":["context/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@context/*": [
+        "context/*"
+      ],
+      "@lib/*": [
+        "lib/*"
+      ]
     }
   },
   "include": [
