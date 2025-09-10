@@ -14,12 +14,15 @@ import React, { useState } from "react";
 import Button from "@/components/Button";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState('')
+  const { id } = useLocalSearchParams();
+  const isUpdating = !!id;
 
   const validateInputs = () => {
     setErrors('')
@@ -42,26 +45,12 @@ const CreateProductScreen = () => {
     return true
   }
   const handleCreate = () => {
-    if (!validateInputs()) return;
-    Alert.alert(
-      "Confirm Product Creation",
-      `Are you sure you want to create "${name}" with price ₹${price}?`,
-      [
-        { text: "No", style: "cancel" },
-        {
-          text: "Yes",
-          onPress: () => {
-            console.log("Created product:", { name, price, image });
-            Alert.alert("Success", "Product Created Successfully ✅");
-            setName('');
-            setImage('')
-            setPrice('')
-          },
-        },
-      ]
-    );
-  };
 
+    Alert.alert("Success", "Product Created Successfully ✅");
+    setName('');
+    setImage('')
+    setPrice('')
+  };
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -75,14 +64,45 @@ const CreateProductScreen = () => {
     }
   };
 
+  const handleUpdate = () => {
+    console.log("updated")
+    Alert.alert("Success", "Product updated Successfully ✅");
+  }
+  const onSubmit = () => {
+    if (!validateInputs()) return;
+    if (isUpdating) {
+      handleUpdate()
+    } else {
+      handleCreate()
+    }
+  }
+
+  const handleDelete = () => {
+    alert('Product Delelted Successfully.')
+  }
+  const confirmDelete = () => {
+    Alert.alert("Confirm", 'Are you sure want to delete this product ?', [
+      {
+        text: 'Cancel'
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: handleDelete
+      }
+    ])
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
+      <Stack.Screen
+        options={{ title: isUpdating ? 'Update Product' : 'Create Product' }}
+      />
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
       >
         {/* Image Section */}
         <TouchableOpacity onPress={pickImage} style={styles.imageWrapper}>
@@ -92,7 +112,7 @@ const CreateProductScreen = () => {
           {image && <Image source={{ uri: image }} style={styles.image} />}
         </TouchableOpacity>
         <Text onPress={pickImage} style={styles.imageText}>
-          {image ? "Change Image" : "Select an Image"}
+          {image ? <Ionicons name="sync" size={32} /> : "Select an Image"}
         </Text>
 
         {/* Input Fields */}
@@ -119,7 +139,8 @@ const CreateProductScreen = () => {
         {errors && <Text style={{ color: 'red', textAlign: 'center' }}>{errors}</Text>}
 
         {/* Button */}
-        <Button title={"Create Product"} onPress={handleCreate} />
+        <Button title={isUpdating ? "Update Product" : "Create Product"} onPress={onSubmit} />
+        {isUpdating && <Text onPress={confirmDelete} style={{ textAlign: 'center', color: "#007AFF", fontWeight: '600' }}>Delete</Text>}
       </ScrollView>
     </KeyboardAvoidingView>
   );

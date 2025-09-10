@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { Alert } from "react-native";
 import { randomUUID } from 'expo-crypto'
+import products from '@assets/data/products';
 const CartContext = createContext(null);
 
 const CartProvider = ({ children }) => {
