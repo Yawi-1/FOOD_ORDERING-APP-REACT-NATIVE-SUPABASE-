@@ -1,15 +1,26 @@
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import React from 'react';
 import Button from '@/components/Button';
-import { Link } from 'expo-router';
+import { Link, Redirect } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
-import { Redirect } from 'expo-router';
 
-const index = () => {
-  const { session, isAdmin } = useAuth()
-  if (!session) return <Redirect href={'/sign-in'} />
-  if (session && !isAdmin) return <Redirect href={'/(user)'} />
+const Index = () => {
+  const { session, loading, isAdmin } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={'blue'} />
+      </View>
+    );
+  }
+
+  // redirect if no session
+  if (!session) return <Redirect href={'/sign-in'} />;
+
+  // redirect if user but not admin
+  if (session && !isAdmin) return <Redirect href={'/(user)'} />;
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
@@ -21,8 +32,7 @@ const index = () => {
       </Link>
       <Button title={'Sign Out'} onPress={() => supabase.auth.signOut()} />
     </View>
-
   );
 };
 
-export default index;
+export default Index;

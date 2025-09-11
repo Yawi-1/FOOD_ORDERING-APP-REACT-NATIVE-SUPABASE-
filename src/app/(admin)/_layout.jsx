@@ -1,13 +1,15 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-
+import { useAuth } from "@/context/AuthContext";
 export default function TabsLayout() {
+  const { isAdmin, loading } = useAuth()
+  if (!isAdmin && !loading) return <Redirect href={'/sign-in'} />
   return (
     <Tabs screenOptions={{
       headerShown: false, tabBarStyle: {
         backgroundColor: "blue",
       },
-      tabBarActiveTintColor: "white",   // active icon & label color
+      tabBarActiveTintColor: "white",
       tabBarInactiveTintColor: "gray"
 
     }} >

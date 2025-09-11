@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack } from "expo-router";
-import { Pressable, Text } from "react-native";
+import { Pressable } from "react-native";
 export default function MenuStack() {
   return (
     <Stack
