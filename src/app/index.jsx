@@ -16,10 +16,16 @@ const Index = () => {
     );
   }
 
-  // redirect if no session
   if (!session) return <Redirect href={'/sign-in'} />;
 
-  // redirect if user but not admin
+  if (session && isAdmin === undefined) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={'blue'} />
+      </View>
+    );
+  }
+
   if (session && !isAdmin) return <Redirect href={'/(user)'} />;
 
   return (

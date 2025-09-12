@@ -1,17 +1,37 @@
 import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
+import { ActivityIndicator, View } from "react-native";
+
 export default function TabsLayout() {
-  const { isAdmin, loading } = useAuth()
-  if (!isAdmin && !loading) return <Redirect href={'/sign-in'} />
+  const { session, isAdmin, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
+  }
+
+  if (session && isAdmin === undefined) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
+  }
+
+  if (session && !isAdmin) return <Redirect href="/(user)" />;
+
   return (
     <Tabs screenOptions={{
-      headerShown: false, tabBarStyle: {
+      headerShown: false, 
+      tabBarStyle: {
         backgroundColor: "blue",
       },
       tabBarActiveTintColor: "white",
       tabBarInactiveTintColor: "gray"
-
     }} >
       <Tabs.Screen name='index' options={{ href: null }} />
       <Tabs.Screen

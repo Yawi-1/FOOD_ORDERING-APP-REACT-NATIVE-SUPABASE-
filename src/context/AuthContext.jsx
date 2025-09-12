@@ -8,41 +8,24 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
 
-  const fetchSessionAndProfile = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    setSession(session);
-
-    if (session) {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("group")
-        .eq("id", session.user.id)
-        .single();
-
-      if (!error && data) {
-        setProfile(data.group);
-      }
-    }
-
-    setLoading(false);
-  };
-
   useEffect(() => {
-    fetchSessionAndProfile();
+    const fetchInitialAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
 
-    const { data: subscription } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      if (session) {
+        await fetchProfile(session.user.id);
+      }
+      setLoading(false);
+    };
+
+    fetchInitialAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
         setSession(session);
         if (session) {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("group")
-            .eq("id", session.user.id)
-            .single();
-
-          if (!error && data) {
-            setProfile(data.group);
-          }
+          await fetchProfile(session.user.id);
         } else {
           setProfile(null);
         }
@@ -50,19 +33,33 @@ const AuthProvider = ({ children }) => {
       }
     );
 
-    return () => {
-      subscription.subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
+
+  const fetchProfile = async (userId) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("group")
+      .eq("id", userId)
+      .single();
+
+    if (!error && data) {
+      setProfile(data.group);
+    }
+  };
 
   const isAdmin = profile === "ADMIN";
 
   return (
-    <AuthContext.Provider value={{ session, loading, isAdmin }}>
+    <AuthContext.Provider value={{
+      session,
+      loading: loading || (session && !profile), 
+      isAdmin
+    }}>
       {children}
     </AuthContext.Provider>
   );
 };
+export default AuthProvider
 
-export default AuthProvider;
 export const useAuth = () => useContext(AuthContext);
