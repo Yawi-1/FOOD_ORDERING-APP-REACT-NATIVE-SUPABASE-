@@ -5,7 +5,7 @@ export default function OrderStack() {
         <Stack screenOptions={{
             headerTitleAlign: 'center'
         }}>
-            <Stack.Screen name="index" options={{ title: 'Orders' }} />
+            <Stack.Screen name="list" options={{ headerShown:false }} />
             <Stack.Screen name='[id]' options={{ title: 'Order Detail' }} />
         </Stack>
     )
