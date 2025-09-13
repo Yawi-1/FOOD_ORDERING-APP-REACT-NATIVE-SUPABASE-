@@ -1,27 +1,32 @@
-import products from '@assets/data/products';
-import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions, Pressable } from 'react-native';
-import { useCart } from '@/context/CartProvider';
 import Button from '@/components/Button';
 import { Ionicons } from '@expo/vector-icons';
+import { useProduct } from '@/api/products';
+import { ActivityIndicator } from 'react-native';
 const { width } = Dimensions.get('window');
 
 const ProductDetail = () => {
-  const { id } = useLocalSearchParams();
-  const router = useRouter();
-  const product = products.find((p) => p.id.toString() === id);
-
-  if (!product) return <Text>GO BACK</Text>;
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(idString)
+  const { data: product, error, isLoading } = useProduct(typeof idString === 'string' ? id : id[0])
+  if (isLoading) {
+    return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator size={'large'} color={'red'} /></View>
+  }
+  if (error) {
+    <Text> Data can't be fetched.</Text>
+  }
   return (
     <ScrollView style={styles.container}>
-      <Stack.Screen options={{ title: product.name,  headerRight: () => (
+      <Stack.Screen options={{
+        title: product.name, headerRight: () => (
           <Link href={`/(admin)/menu/create?id=${id}`} asChild>
             <Pressable>
               <Ionicons name="create" size={24} color={'#007aff'} />
             </Pressable>
           </Link>
-        )}} />
+        )
+      }} />
 
       {/* Responsive image */}
       <Image source={{ uri: product.image }} style={styles.image} />
@@ -29,8 +34,8 @@ const ProductDetail = () => {
       <Text style={[styles.label, { fontSize: 18 }]}>
         Price: ₹{product.price}
       </Text>
-     <Button title='Add to cart'/>
-      
+      <Button title='Add to cart' />
+
     </ScrollView>
   );
 };

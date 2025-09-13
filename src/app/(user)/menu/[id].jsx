@@ -1,25 +1,32 @@
-import products from '@assets/data/products';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions } from 'react-native';
 import { useCart } from '@/context/CartProvider';
 import Button from '@/components/Button';
+import { ActivityIndicator } from 'react-native';
+import { useProduct } from '@/api/products';
 const { width } = Dimensions.get('window');
 
 const ProductDetail = () => {
-  const { id } = useLocalSearchParams();
   const router = useRouter();
-  const sizes = ['S', 'M', 'L', 'XL'];
-  const [selectedSize, setSelectedSize] = useState('M');
-  const product = products.find((p) => p.id.toString() === id);
   const { addItem } = useCart();
-  
+  const [selectedSize, setSelectedSize] = useState('M');
+  const sizes = ['S', 'M', 'L', 'XL'];
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(idString)
+  const { data: product, error, isLoading } = useProduct(typeof idString === 'string' ? id : id[0])
+
   const addToCart = () => {
     addItem(product, selectedSize)
     router.push('/cart')
   }
+  if (isLoading) {
+    return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator size={'large'} color={'red'} /></View>
+  }
+  if (error) {
+    <Text> Data can't be fetched.</Text>
+  }
 
-  if (!product) return <Text>GO BACK</Text>;
   return (
     <ScrollView style={styles.container}>
       <Stack.Screen options={{ title: product.name }} />
@@ -56,8 +63,8 @@ const ProductDetail = () => {
       <Text style={[styles.label, { fontSize: 18 }]}>
         Price: ₹{product.price}
       </Text>
-     <Button title='Add to cart' onPress={addToCart}/>
-      
+      <Button title='Add to cart' onPress={addToCart} />
+
     </ScrollView>
   );
 };
@@ -85,7 +92,7 @@ const styles = StyleSheet.create({
   },
   sizeContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap', 
+    flexWrap: 'wrap',
     gap: 12,
     marginBottom: 20,
   },

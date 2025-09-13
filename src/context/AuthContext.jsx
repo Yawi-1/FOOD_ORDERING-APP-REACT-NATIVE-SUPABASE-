@@ -53,7 +53,7 @@ const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       session,
-      loading: loading || (session && !profile), 
+      loading: loading || (session && !profile),
       isAdmin
     }}>
       {children}
