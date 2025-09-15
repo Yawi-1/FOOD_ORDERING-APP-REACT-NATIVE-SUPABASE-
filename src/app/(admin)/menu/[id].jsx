@@ -1,5 +1,5 @@
 import { Link, Stack, useLocalSearchParams } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions, Pressable } from 'react-native';
+import { Image, StyleSheet, Text, View, ScrollView, Dimensions, Pressable } from 'react-native';
 import Button from '@/components/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { useProduct } from '@/api/products';
@@ -45,12 +45,12 @@ export default ProductDetail;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16, // ✅ better spacing
+    padding: 16, 
     backgroundColor: '#fff',
   },
   image: {
-    width: width - 32, // ✅ full width minus padding
-    height: width - 32, // ✅ keep square ratio
+    width: width - 32, 
+    height: width - 32, 
     borderRadius: 12,
     resizeMode: 'cover',
     alignSelf: 'center',
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '600', // ✅ must be string
+    fontWeight: '600', 
     marginVertical: 8,
   },
 });

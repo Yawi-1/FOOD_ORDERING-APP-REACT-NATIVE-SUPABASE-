@@ -9,48 +9,27 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useInsertProduct, useProduct, useUpdateProduct } from "@/api/products";
 
 const CreateProductScreen = () => {
+  const { id } = useLocalSearchParams();
+   const isUpdating = !!id;
+  const { mutate: insertProduct, isLoading: insertLoading } = useInsertProduct()
+  const { data: updatedProduct } = useProduct(id)
+  const { mutate: updateproduct, isLoading: updateLoading } = useUpdateProduct()
   const [name, setName] = useState("");
   const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState('')
-  const { id } = useLocalSearchParams();
-  const isUpdating = !!id;
+  const router = useRouter()
 
-  const validateInputs = () => {
-    setErrors('')
-    if (!name) {
-      setErrors('Product name is required.')
-      return false
-    }
-    if (!price) {
-      setErrors('Price is required.')
-      return false
-    }
-    if (!image) {
-      setErrors('Image is required.')
-      return false
-    }
-    if (isNaN(parseInt(price))) {
-      setErrors('Price must be number.')
-      return false
-    }
-    return true
-  }
-  const handleCreate = () => {
-
-    Alert.alert("Success", "Product Created Successfully ✅");
-    setName('');
-    setImage('')
-    setPrice('')
-  };
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -63,10 +42,47 @@ const CreateProductScreen = () => {
       setImage(result.assets[0].uri);
     }
   };
-
+  const validateInputs = () => {
+    setErrors('')
+    if (!name) {
+      setErrors('Product name is required.')
+      return false
+    }
+    if (!price) {
+      setErrors('Price is required.')
+      return false
+    }
+    // if (!image) {
+    //   setErrors('Image is required.')
+    //   return false
+    // }
+    if (isNaN(parseInt(price))) {
+      setErrors('Price must be number.')
+      return false
+    }
+    return true
+  }
+  const handleCreate = () => {
+    insertProduct(
+      { name, price },
+      {
+        onSuccess: () => {
+          Alert.alert("Success", "Product Created Successfully ✅");
+          setName("");
+          setPrice("");
+          setImage(null);
+          router.back();
+        },
+      }
+    );
+  };
   const handleUpdate = () => {
-    console.log("updated")
-    Alert.alert("Success", "Product updated Successfully ✅");
+    updateproduct(updatedProduct, {
+      onSuccess() {
+        Alert.alert("Success", "Product updated Successfully ✅");
+        router.back()
+      }
+    })
   }
   const onSubmit = () => {
     if (!validateInputs()) return;
@@ -76,7 +92,6 @@ const CreateProductScreen = () => {
       handleCreate()
     }
   }
-
   const handleDelete = () => {
     alert('Product Delelted Successfully.')
   }
@@ -92,7 +107,14 @@ const CreateProductScreen = () => {
       }
     ])
   }
-
+  useEffect(() => {
+    console.log('hello')
+    if (isUpdating && updatedProduct) {
+      setName(updatedProduct.name)
+      setPrice(updatedProduct.price.toString())
+      // setImage(updatedProduct.image)
+    }
+  }, [updatedProduct])
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -130,16 +152,23 @@ const CreateProductScreen = () => {
           <Text style={styles.label}>Price (₹)</Text>
           <TextInput
             placeholder="Enter price"
-            value={price.toString()}
-            onChangeText={(text) => setPrice(Number(text))}
+            value={price}
+            onChangeText={setPrice}
             style={styles.input}
             keyboardType="numeric"
           />
         </View>
         {errors && <Text style={{ color: 'red', textAlign: 'center' }}>{errors}</Text>}
 
-        {/* Button */}
-        <Button title={isUpdating ? "Update Product" : "Create Product"} onPress={onSubmit} />
+
+        {insertLoading || updateLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <Button
+            title={isUpdating ? "Update Product" : "Create Product"}
+            onPress={onSubmit}
+          />
+        )}
         {isUpdating && <Text onPress={confirmDelete} style={{ textAlign: 'center', color: "#007AFF", fontWeight: '600' }}>Delete</Text>}
       </ScrollView>
     </KeyboardAvoidingView>

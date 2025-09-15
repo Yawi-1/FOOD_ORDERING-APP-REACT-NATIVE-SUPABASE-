@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { ActivityIndicator, View } from "react-native";
 
 export default function TabsLayout() {
-  const { session, isAdmin, loading } = useAuth()
+  const { isAdmin, loading } = useAuth()
 
   if (loading) {
     return (
@@ -14,15 +14,7 @@ export default function TabsLayout() {
     );
   }
 
-  if (session && isAdmin === undefined) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="blue" />
-      </View>
-    );
-  }
-
-  if (session && !isAdmin) return <Redirect href="/(user)" />;
+  if (!isAdmin) return <Redirect href="/(user)" />;
 
   return (
     <Tabs screenOptions={{

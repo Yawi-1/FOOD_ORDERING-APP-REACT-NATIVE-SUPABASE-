@@ -1,16 +1,13 @@
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Button from '@/components/Button';
-import { Link, Redirect, Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/context/AuthContext';
+
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false)
-  const { session } = useAuth()
-  if(session) return <Redirect href={'/'}/>
-
 
   async function signInWithEmail() {
     setLoading(true)
