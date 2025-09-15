@@ -16,14 +16,15 @@ import Button from "@/components/Button";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useInsertProduct, useProduct, useUpdateProduct } from "@/api/products";
+import { useInsertProduct, useProduct, useUpdateProduct, useDeleteProduct } from "@/api/products";
 
 const CreateProductScreen = () => {
   const { id } = useLocalSearchParams();
-   const isUpdating = !!id;
+  const isUpdating = !!id;
   const { mutate: insertProduct, isLoading: insertLoading } = useInsertProduct()
   const { data: updatedProduct } = useProduct(id)
   const { mutate: updateproduct, isLoading: updateLoading } = useUpdateProduct()
+  const { mutate: deleteProduct, isLoading: deleteLoading } = useDeleteProduct()
   const [name, setName] = useState("");
   const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
@@ -77,7 +78,7 @@ const CreateProductScreen = () => {
     );
   };
   const handleUpdate = () => {
-    updateproduct(updatedProduct, {
+    updateproduct({ id: updatedProduct.id, name, price }, {
       onSuccess() {
         Alert.alert("Success", "Product updated Successfully ✅");
         router.back()
@@ -93,8 +94,17 @@ const CreateProductScreen = () => {
     }
   }
   const handleDelete = () => {
-    alert('Product Delelted Successfully.')
+    deleteProduct(updatedProduct.id, {
+      onSuccess: () => {
+        Alert.alert("Success", "Product Deleted Successfully ✅")
+        router.push("/(admin)/menu")
+      },
+      onError: (err) => {
+        Alert.alert("Error", err.message || "Failed to delete product")
+      }
+    })
   }
+
   const confirmDelete = () => {
     Alert.alert("Confirm", 'Are you sure want to delete this product ?', [
       {
@@ -107,11 +117,11 @@ const CreateProductScreen = () => {
       }
     ])
   }
+ 
   useEffect(() => {
-    console.log('hello')
     if (isUpdating && updatedProduct) {
-      setName(updatedProduct.name)
-      setPrice(updatedProduct.price.toString())
+      setName(updatedProduct?.name ?? "")
+      setPrice(updatedProduct?.price?.toString() ?? "")
       // setImage(updatedProduct.image)
     }
   }, [updatedProduct])
@@ -159,7 +169,6 @@ const CreateProductScreen = () => {
           />
         </View>
         {errors && <Text style={{ color: 'red', textAlign: 'center' }}>{errors}</Text>}
-
 
         {insertLoading || updateLoading ? (
           <ActivityIndicator />

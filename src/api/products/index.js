@@ -71,3 +71,25 @@ export const useUpdateProduct = () => {
         },
     })
 }
+
+export const useDeleteProduct = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        async mutationFn(id) {
+            const { data, error } = await supabase
+                .from('products')
+                .delete()
+                .eq('id', id)
+            if (error) {
+                throw error
+            }
+            return data
+        },
+        async onSuccess() {
+            await queryClient.invalidateQueries(['products'])
+        },
+        onError(error) {
+            console.log(error);
+        }
+    })
+}
