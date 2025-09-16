@@ -1,13 +1,18 @@
 import { FlatList } from 'react-native'
-import orders from '@assets/data/orders'
 import OrderListItem from '@/components/OrderListItem'
+import { useMyOrderList } from '@/api/orders'
+import { useAuth } from '@/context/AuthContext'
 
 const Orders = () => {
+  const { session } = useAuth()
+  const { id } = session.user
+  const { data: myOrders } = useMyOrderList(id)
+
   return (
-      <FlatList
-        data={orders}
-        renderItem={({ item }) => <OrderListItem order={item} />}
-      />
+    <FlatList
+      data={myOrders}
+      renderItem={({ item }) => <OrderListItem order={item} />}
+    />
   )
 }
 

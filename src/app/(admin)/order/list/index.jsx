@@ -1,13 +1,35 @@
-import { FlatList } from 'react-native'
-import orders from '@assets/data/orders'
+import { ActivityIndicator, FlatList, Text, View } from 'react-native'
 import OrderListItem from '@/components/OrderListItem'
+import { useAdminOrdersList } from '@/api/orders'
 
 const Orders = () => {
+  const { data: orders, isLoading, error } = useAdminOrdersList({ archived: false })
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Orders failed to fetch.</Text>
+      </View>
+    )
+  }
+
   return (
-      <FlatList
-        data={orders}
-        renderItem={({ item }) => <OrderListItem order={item} />}
-      />
+    <FlatList
+      data={orders}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => <OrderListItem order={item} />}
+      ListEmptyComponent={
+        <Text style={{ textAlign: 'center', marginTop: 20 }}>No orders found.</Text>
+      }
+    />
   )
 }
 
