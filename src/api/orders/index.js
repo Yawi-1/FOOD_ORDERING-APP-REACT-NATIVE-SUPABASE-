@@ -16,7 +16,7 @@ export const useAdminOrdersList = ({ archived }) => {
 
 export const useMyOrderList = (id) => {
     return useQuery({
-        queryKey: ['orders', id],
+        queryKey: ['myorders', id],
         queryFn: async () => {
             const { error, data } = await supabase.from('orders').select('*').eq('user_id', id)
             if (error) {
@@ -29,9 +29,9 @@ export const useMyOrderList = (id) => {
 
 export const useReadOrderById = (id) => {
     return useQuery({
-        queryKey: ['read-orders', id],
+        queryKey: ['orders', id],
         queryFn: async () => {
-            const { data, error } = await supabase.from('order_items').select('*').eq('order_id', id)
+            const { data, error } = await supabase.from('orders').select('*, order_items(*, products(*))').eq('id', id).single()
             if (error) return error
             return data
         }

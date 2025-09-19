@@ -1,13 +1,29 @@
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { useLocalSearchParams } from 'expo-router'
-import orders from '@assets/data/orders'
 import OrderListItem from '@/components/OrderListItem'
+import { useReadOrderById } from '@/api/orders'
 
 const OrderDetail = () => {
-  const { id } = useLocalSearchParams()
-  const order = orders.find((o) => o.id.toString() === id)
-  const status = ['New', 'Cooking', 'Delivering', 'Delivered']
+    const { id: orderId } = useLocalSearchParams()
+    const id = Number(orderId)
+     const status = ['New', 'Cooking', 'Delivering', 'Delivered']
+  
+    const { data: order, isLoading, error } = useReadOrderById(id)
+   
+  
+    if (isLoading) {
+      return <ActivityIndicator />
+    }
+  
+    if (error) {
+      return <Text>Failed to load order.</Text>
+    }
+  
+    if (!order) {
+      return <Text>No order found.</Text>
+    }
+ 
 
   return (
     <View style={styles.container}>
