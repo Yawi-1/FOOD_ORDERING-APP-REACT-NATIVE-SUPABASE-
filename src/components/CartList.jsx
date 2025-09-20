@@ -17,11 +17,11 @@ const CartList = ({ cartItem }) => {
             </View>
             {/* Update Button */}
             <View style={styles.updateBtnContainer}>
-                <TouchableOpacity onPress={() => updateQuantity(cartItem.id, -1)}>
+                <TouchableOpacity onPress={() => updateQuantity(cartItem.product_id, cartItem.size, -1)}>
                     <Text style={styles.updateBtn}>–</Text>
                 </TouchableOpacity>
                 <Text>{cartItem.quantity}</Text>
-                <TouchableOpacity onPress={() => updateQuantity(cartItem.id, 1)}>
+                <TouchableOpacity onPress={() => updateQuantity(cartItem.product_id, cartItem.size, 1)}>
                     <Text style={styles.updateBtn}>+</Text>
                 </TouchableOpacity>
             </View>

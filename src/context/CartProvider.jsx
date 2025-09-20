@@ -1,7 +1,5 @@
 import { createContext, useContext, useState } from "react";
 import { Alert } from "react-native";
-import { randomUUID } from 'expo-crypto'
-import products from '@assets/data/products';
 const CartContext = createContext(null);
 
 const CartProvider = ({ children }) => {
@@ -17,7 +15,7 @@ const CartProvider = ({ children }) => {
 
         let newItem = {
             name: product.name,
-            id: randomUUID(),
+            product_id: product.id,
             size,
             price: product.price,
             image: product.image,
@@ -28,12 +26,12 @@ const CartProvider = ({ children }) => {
         Alert.alert('item added to cart ')
     }
 
-    const updateQuantity = (id, amount) => {
-        setCartItems(cartItems.map(item => item.id === id ? { ...item, quantity: item.quantity + amount } : item).filter(item => item.quantity > 0))
+    const updateQuantity = (id,size, amount) => {
+        setCartItems(cartItems.map(item => (item.product_id === id && item.size === size) ? { ...item, quantity: item.quantity + amount } : item).filter(item => item.quantity > 0))
     }
     const total = cartItems.reduce((sum, item) => sum += item.price * item.quantity, 0)
     return (
-        <CartContext.Provider value={{ cartItems, addItem, updateQuantity, total }}>
+        <CartContext.Provider value={{ cartItems, setCartItems, addItem, updateQuantity, total }}>
             {children}
         </CartContext.Provider>
     )
